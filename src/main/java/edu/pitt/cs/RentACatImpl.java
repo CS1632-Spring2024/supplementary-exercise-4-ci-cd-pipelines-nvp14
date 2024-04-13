@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class RentACatImpl implements RentACat {
-
 	private ArrayList<Cat> cats = new ArrayList<Cat>();
 
 	/**
@@ -18,20 +17,22 @@ public class RentACatImpl implements RentACat {
 	 */
 
 	public boolean returnCat(int id) {
-		// TODO: Fill in
-		Cat catToReturn = getCat(id);
-        if (catToReturn != null) {
-            if (catToReturn.getRented()) {
-                catToReturn.returnCat();
-				System.out.println("Welcome back, " + catToReturn.getName() + "!");
-                return true;
-            } else {
-				System.out.println(catToReturn.getName() + " is already here!");
-                return false;
-            }
-        }
-        return false;
-
+		Cat cat = getCat(id);
+		
+		if (cat != null && cat.getRented()) {
+			cat.returnCat();
+			System.out.println("Welcome back, " + cat.getName() + "!");
+			
+			return true;
+		} else if (cat != null && !cat.getRented()) {
+			System.out.println(cat.getName() + " is already here!");
+			
+			return false;
+		} else {
+			System.out.println("Invalid cat ID.\n");
+			
+			return false;
+		}
 	}
 
 	/**
@@ -45,19 +46,22 @@ public class RentACatImpl implements RentACat {
 	 */
 
 	public boolean rentCat(int id) {
-		// TODO: Fill in
-		Cat catToRent = getCat(id);
-        if (catToRent != null) {
-            if (!catToRent.getRented()) {
-                catToRent.rentCat();
-				System.out.println(catToRent.getName() + " has been rented.");
-                return true;
-            } else {
-				System.out.println("Sorry, " + catToRent.getName() + " is not here!");
-                return false;
-            }
-        }
-        return false;
+		Cat cat = getCat(id);
+
+		if (cat != null && !cat.getRented()) {
+			cat.rentCat();
+			System.out.println(cat.getName() + " has been rented.");
+			
+			return true;
+		} else if (cat.getRented()) {
+			System.out.println("Sorry, " + cat.getName() + " is not here!");
+			
+			return false;
+		} else {
+			System.out.println("Invalid cat ID.\n");
+			
+			return false;
+		}
 	}
 
 	/**
@@ -70,15 +74,13 @@ public class RentACatImpl implements RentACat {
 	 */
 
 	public boolean renameCat(int id, String name) {
-		// TODO: Fill in
-		Cat catToRename = getCat(id);
-		if (!catToRename.getRented() & catToRename != null) {
-            catToRename.renameCat(name);
-			System.out.println("Hello, " + name + "!");
-            return true;
-        } 
-		System.out.println("Sorry, " + catToRename.getName() + " is not here!");
-        return false;
+		Cat cat = getCat(id);
+
+		if (cat != null) {
+			cat.renameCat(name);
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -92,16 +94,19 @@ public class RentACatImpl implements RentACat {
 	 */
 
 	public String listCats() {
-		// TODO: Fill in
-		StringBuilder rentableCats = new StringBuilder();
+		
+		if (this.cats == null || this.cats.size() == 0) return "";
 
-		for (Cat cat : cats) {
-			if (!cat.getRented()) {  
-				rentableCats.append(cat.toString()).append("\n");
+		StringBuilder builder = new StringBuilder();
+		for (Cat cat : this.cats) {
+			
+			if (!cat.getRented()) {
+				builder.append(cat.toString());
+				builder.append("\n");
 			}
 		}
-	
-		return rentableCats.toString();
+		
+		return builder.toString();
 	}
 
 	/**
@@ -114,23 +119,16 @@ public class RentACatImpl implements RentACat {
 
 	private Cat getCat(int id) {
 
-		// null check
 		if (cats == null) {
 			return null;
 		}
 
-		// Loop through every cat in the cat list
 		for (Cat c : cats) {
-			// If we found a cat whose id matches the id
-			// of the argument, then we have a match and
-			// can thus return a reference to that cat
 			if (c.getId() == id) {
 				return c;
 			}
 		}
-		// If we get all the way through the list and did
-		// not find a cat whose ID matches the passed-in
-		// ID, then the cat is not in the list
+	
 		System.out.println("Invalid cat ID.");
 		return null;
 
@@ -221,7 +219,6 @@ public class RentACatImpl implements RentACat {
 				System.err.println("3. Return a cat from a customer");
 				System.err.println("4. Rename a cat");
 				System.err.println("5. Quit");
-				// Clear out the non-int in the scanner
 				sc.next();
 			}
 		}
